@@ -37,23 +37,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.SqlServer.ConnectionInfo, Version=10.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Program Files\Microsoft SQL Server\100\SDK\Assemblies\Microsoft.SqlServer.ConnectionInfo.dll</HintPath>
+    <Reference Include="Caliburn.Micro">
+      <HintPath>..\packages\Caliburn.Micro.1.5.2\lib\net40\Caliburn.Micro.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.SqlServer.Management.Sdk.Sfc, Version=10.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Program Files\Microsoft SQL Server\100\SDK\Assemblies\Microsoft.SqlServer.Management.Sdk.Sfc.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.SqlServer.Smo, Version=10.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Program Files\Microsoft SQL Server\100\SDK\Assemblies\Microsoft.SqlServer.Smo.dll</HintPath>
-    </Reference>
-    <Reference Include="NHunspell">
-      <HintPath>..\packages\NHunspell.1.1.1\lib\net\NHunspell.dll</HintPath>
+    <Reference Include="Ninject">
+      <HintPath>..\packages\Ninject.3.0.1.10\lib\net40\Ninject.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Windows.Interactivity">
+      <HintPath>..\packages\Caliburn.Micro.1.5.2\lib\net40\System.Windows.Interactivity.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -71,14 +65,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="IgnoreDictionaryHelper.cs" />
-    <Compile Include="Utils\DatabaseTable.cs" />
-    <Compile Include="Utils\ISmoTasks.cs" />
-    <Compile Include="Utils\SmoTasks.cs" />
-    <Compile Include="Utils\SqlConnectionString.cs" />
+    <Compile Include="CaliBootstrapper.cs" />
+    <Compile Include="NinjectRegistry.cs" />
     <Compile Include="ViewModels\DbConnectionViewModel.cs" />
+    <Compile Include="ViewModels\EditIgnoreListViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
-    <Compile Include="Utils\SpellChecker.cs" />
     <Compile Include="UserControls\LoadingCircle.xaml.cs">
       <DependentUpon>LoadingCircle.xaml</DependentUpon>
     </Compile>
@@ -89,11 +80,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\DbConnectionManager.xaml">
+    <Page Include="Views\DbConnectionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\MainWindow.xaml">
+    <Page Include="Views\EditIgnoreListView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MainWindowView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -101,11 +96,14 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Views\DbConnectionManager.xaml.cs">
-      <DependentUpon>DbConnectionManager.xaml</DependentUpon>
+    <Compile Include="Views\DbConnectionView.xaml.cs">
+      <DependentUpon>DbConnectionView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
+    <Compile Include="Views\EditIgnoreListView.xaml.cs">
+      <DependentUpon>EditIgnoreListView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MainWindowView.xaml.cs">
+      <DependentUpon>MainWindowView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Page Include="UserControls\SqlConnectionStringBuilder.xaml">
@@ -156,13 +154,13 @@
       <Project>{DE8C4B27-E532-4BB9-93AB-DEAFE3FAE895}</Project>
       <Name>BaseLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DbHandler\DbHandler.csproj">
+    <ProjectReference Include="..\DbHandler\MsSqlDbHandler.csproj">
       <Project>{B74DE4DA-479F-44B5-870F-78C49C07FF68}</Project>
-      <Name>DbHandler</Name>
+      <Name>MsSqlDbHandler</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ViewModelBaseLibrary\ViewModelBaseLibrary.csproj">
-      <Project>{956BDA4F-EFC0-4321-895E-C23C69C2A7F3}</Project>
-      <Name>ViewModelBaseLibrary</Name>
+    <ProjectReference Include="..\Utils\Utils.csproj">
+      <Project>{6F9FE3BA-7A93-403D-AB9E-E3E939D7A3B7}</Project>
+      <Name>Utils</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -178,7 +176,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /s /y "$(SolutionDir)packages\NHunspell.1.1.1\native\*.*" "$(TargetDir)"</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

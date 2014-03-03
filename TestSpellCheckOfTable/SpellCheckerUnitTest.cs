@@ -2,9 +2,10 @@
 using System.Linq;
 using BaseLibrary;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MsSqlDbHandler.Utils;
 using Rhino.Mocks;
 using SpellCheckDbTable;
-using SpellCheckDbTable.Utils;
+using Utils;
 
 namespace TestSpellCheckOfTable
 {

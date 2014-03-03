@@ -5,7 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Markup;
-using SpellCheckDbTable.Utils;
+using MsSqlDbHandler.Utils;
 
 namespace SpellCheckDbTable.UserControls
 {
@@ -40,7 +40,7 @@ namespace SpellCheckDbTable.UserControls
         }
 
         public SqlConnectionStringBuilder()
-            : this(new SmoTasks())
+            //: this(new SmoTasks())
         {
             InitializeComponent();
         }

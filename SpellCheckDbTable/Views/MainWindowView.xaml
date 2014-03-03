@@ -1,0 +1,43 @@
+﻿<Window x:Class="SpellCheckDbTable.Views.MainWindowView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:cal="http://www.caliburnproject.org"
+        Title="Database spell checker" Height="500" Width="800" WindowState="Normal">
+    <Grid Grid.Column="2" Grid.Row="3">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="300"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="140"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="25"/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Column="0" Grid.Row="0">
+            <Label Content="Table to search for spelling errors:" HorizontalContentAlignment="Right" MinHeight="20" />
+            <Label Content="Column to spell check:" HorizontalContentAlignment="Right"  MinHeight="20"/>
+            <Label Content="Display miss spelled words only:" HorizontalContentAlignment="Right"  MinHeight="20" />
+            <Label Content="{Binding NumberOfMissSpellings}" HorizontalContentAlignment="Left" FontWeight="Bold" MinHeight="20"/>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="{Binding IgnoreListFile}" HorizontalContentAlignment="Left" FontWeight="Bold" MinHeight="20" />
+                <Button Content="View" cal:Message.Attach="ViewEditIqnoreList" MaxWidth="60" HorizontalAlignment="Left" Margin="0,0,0,5" />
+            </StackPanel>
+        </StackPanel>
+        <StackPanel Grid.Column="1" Grid.Row="0" Margin="0,0,5,0">
+            <ComboBox ItemsSource="{Binding TableNames}" SelectedValue="{Binding TableToSearch, Mode=TwoWay}" Margin="0,0,0,5" />
+            <ComboBox ItemsSource="{Binding ColumnNames}" SelectedValue="{Binding ColumnToSpellCheck, Mode=TwoWay}" />
+            <CheckBox IsChecked="{Binding IsMissSpelledOnly}"  Margin="2,15,0,5"/>
+            <Button Content="Begin spell checking table" cal:Message.Attach="SpellCheck" IsEnabled="{Binding IsSpellCheckEnabled}"/>
+        </StackPanel>
+        <Border Grid.ColumnSpan="2" Grid.Row="1" BorderThickness="2" BorderBrush="Black">
+            <ScrollViewer Grid.ColumnSpan="2" Grid.Row="1">
+                <StackPanel Grid.ColumnSpan="2" Grid.Row="1">
+                    <DataGrid ItemsSource="{Binding SpellCheckResults}" CanUserAddRows="True" Height="AUTO" IsReadOnly="True"/>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+        <StackPanel Grid.ColumnSpan="2" Grid.Row="2">
+            <ProgressBar Margin="0,3,0,3" Height="20" Name="progressBar" Value="{Binding CurrentProgress}" Foreground="#FF0A447C" />
+        </StackPanel>
+    </Grid>
+</Window>

@@ -65,13 +65,17 @@
       <Project>{DE8C4B27-E532-4BB9-93AB-DEAFE3FAE895}</Project>
       <Name>BaseLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DbHandler\DbHandler.csproj">
+    <ProjectReference Include="..\DbHandler\MsSqlDbHandler.csproj">
       <Project>{B74DE4DA-479F-44B5-870F-78C49C07FF68}</Project>
-      <Name>DbHandler</Name>
+      <Name>MsSqlDbHandler</Name>
     </ProjectReference>
     <ProjectReference Include="..\SpellCheckDbTable\SpellCheckDbTable.csproj">
       <Project>{95092A2F-AA40-4A69-84F3-B9C5A212798F}</Project>
       <Name>SpellCheckDbTable</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Utils\Utils.csproj">
+      <Project>{6F9FE3BA-7A93-403D-AB9E-E3E939D7A3B7}</Project>
+      <Name>Utils</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
