@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Data;
+using System.Runtime.Versioning;
 using System.Windows.Forms;
 using BaseLibrary;
 
@@ -13,9 +14,8 @@ namespace Utils
     {
         private readonly IIgnoreDictionaryHelper _ignoreDictionaryHelper;
 
-        public SpellChecker(IDbHandler dbHandler, IIgnoreDictionaryHelper ignoreDictionaryHelper)
+        public SpellChecker(IIgnoreDictionaryHelper ignoreDictionaryHelper)
         {
-            Db = dbHandler;
             _ignoreDictionaryHelper = ignoreDictionaryHelper;
         }
 
@@ -24,17 +24,15 @@ namespace Utils
             return SpellCheckTable(tableToSpellCheck, string.Empty, null);
         }
 
-        private IDbHandler Db { get; set; }
-
         public DataTable SpellCheckTable(string tableToSpellCheck, string columnToSpellCheck, BackgroundWorker worker)
         {
-            DataTable dataTable = Db.GetRows(tableToSpellCheck, columnToSpellCheck);
+            DataTable dataTable = DbConnectionManager.ConnectionManager.DbHandler.GetRows(tableToSpellCheck, columnToSpellCheck);
             if (dataTable.Rows.Count < 1)
                 return null;
 
             int rowCounter = 0;
 
-            NHunspell.Hunspell hunspell = new NHunspell.Hunspell("en_us.aff", "en_us.dic");
+            NHunspell.Hunspell hunspell = new NHunspell.Hunspell("Dictionaries\\en_us.aff", "Dictionaries\\en_us.dic");
             dataTable.Columns.Add("IsSpelledCorrectly", typeof(bool));
 
             try

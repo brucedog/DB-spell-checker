@@ -9,7 +9,7 @@ using SpellCheckDbTable.Views;
 
 namespace SpellCheckDbTable
 {
-    public class CaliBootstrapper : Bootstrapper<DbConnectionViewModel>
+    public class CaliBootstrapper : Bootstrapper<MainWindowViewModel>
     {
         protected override void Configure()
         {

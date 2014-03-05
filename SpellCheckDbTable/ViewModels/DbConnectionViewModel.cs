@@ -1,60 +1,95 @@
-using System;
-using System.Data;
-using System.Data.SqlClient;
-using System.Windows;
+using System.Windows.Controls;
 using Caliburn.Micro;
+using SpellCheckDbTable.Properties;
 using SpellCheckDbTable.Views;
+using Utils;
 
 namespace SpellCheckDbTable.ViewModels
 {
     public class DbConnectionViewModel : Screen
     {
+        private readonly MainWindowViewModel _mainWindowViewModel;
+        private bool _isSqlServerAuthenticationSelected;
+        private string _serverName;
+
+        public DbConnectionViewModel(MainWindowViewModel mainWindowViewModel)
+        {
+            DisplayName = Resources.DatabaseConection;
+            _mainWindowViewModel = mainWindowViewModel;
+            IsSqlServerAuthenticationSelected = false;
+            ServerName = "localhost";
+        }
+
+        #region public actions
 
         public void Connect(DbConnectionView view)
         {
-            SqlConnection getConnection = null;
-            try
-            {
-                getConnection = new SqlConnection(BuildConectionString(view));
-                DataTable databases = new DataTable("Databases");
+            DbConnectionManager.ConnectionManager.DbHandler = new MsSqlDbHandler.MsSqlDbHandler(BuildConectionString(view));
+            _mainWindowViewModel.DataBaseNames = DbConnectionManager.ConnectionManager.DbHandler.GetDatabases();
 
-                using (IDbConnection connection = getConnection)
-                {
-                    IDbCommand command = connection.CreateCommand();
-                    command.CommandText = "SELECT * FROM sys.Databases";
-                    connection.Open();
-                    databases.Load(command.ExecuteReader(CommandBehavior.CloseConnection));
-                }
-            }
-            catch (SqlException ex)
+            Close();
+        }
+
+        public void OnSelectionChangedAction(ComboBoxItem comboBoxItem)
+        {
+            IsSqlServerAuthenticationSelected = comboBoxItem.Content.Equals("SQL Server Authentication");            
+        }
+
+        public void OnSelectionChangedServerType(ComboBoxItem comboBoxItem)
+        {
+            //TODO get proper connection type
+            //_connection = new MsSqlDbHandler.MsSqlDbHandler(BuildConectionString(view));
+        }
+
+        public void Close()
+        {
+            TryClose();
+        }
+
+        #endregion
+
+        #region properties
+
+        public string ServerName
+        {
+            get { return _serverName; }
+            set
             {
-                MessageBox.Show("Error while loading available databases", ex.Message);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error while loading available databases", ex.Message);
-            }
-            finally
-            {
-                if (getConnection != null)
-                    getConnection.Close();
+                _serverName = value;
+                NotifyOfPropertyChange(() => ServerName);
             }
         }
+
+        public bool IsSqlServerAuthenticationSelected
+        {
+            get { return _isSqlServerAuthenticationSelected; }
+            set
+            {
+                _isSqlServerAuthenticationSelected = value;
+                NotifyOfPropertyChange(() => IsSqlServerAuthenticationSelected);
+            }
+        }
+
+        #endregion
+
+        #region private methods
 
         private string BuildConectionString(DbConnectionView view)
         {
             string userAuth = GetUserAuth(view);
-            return string.Format("Data Source={0};", view.ServerName.Text.Trim() + userAuth);
+            return string.Format(@"Data Source={0};{1}", ServerName.Trim(), userAuth);
         }
 
         private string GetUserAuth(DbConnectionView view)
         {
-            if (view.AuthType.Equals("Windows Authentication"))
+            if (!view.AuthType.Text.Equals("Windows Authentication"))
             {
                 return string.Format("user Id={0};Password={1};", view.Username.Text.Trim(), view.PasswordBox.Password.Trim());
             }
-            
+
             return string.Format("Integrated Security=True;");
         }
+
+        #endregion
     }
 }

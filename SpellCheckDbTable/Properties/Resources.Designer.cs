@@ -61,6 +61,15 @@ namespace SpellCheckDbTable.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Connect to Database.
+        /// </summary>
+        internal static string DatabaseConection {
+            get {
+                return ResourceManager.GetString("DatabaseConection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Database Spell Checker.
         /// </summary>
         internal static string DisplayName {
@@ -88,7 +97,7 @@ namespace SpellCheckDbTable.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Number of Miss Spellings:.
+        ///   Looks up a localized string similar to Number of Miss Spellings: .
         /// </summary>
         internal static string NumberOfMissSpelling {
             get {

@@ -1,22 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Windows;
 using BaseLibrary;
 
 namespace MsSqlDbHandler
 {
     public class MsSqlDbHandler : IDbHandler
     {
-        public MsSqlDbHandler()
+        private string _dbConnectionString;
+
+        public MsSqlDbHandler(string dbConnectionString)
         {
-            DbConnectionString = ConfigurationManager.AppSettings["ConnString"];
-            if (!IsValidConnectionString(DbConnectionString))
-                MessageBox.Show("Connection string in app.config was not configured correctly. App will shutdown when you click ok.");
+            DbConnectionString = dbConnectionString;
         }
 
         public MsSqlDbHandler(string dbConnectionString, string dbUserName, string dbPassword)
@@ -26,33 +24,24 @@ namespace MsSqlDbHandler
             DbPassword = dbPassword;
         }
 
-        private bool IsValidConnectionString(string dbConnectionString)
-        {
-            if (string.IsNullOrWhiteSpace(dbConnectionString))
-                return ValidConnectionString = false;
-
-            try
-            {
-                using (IDbConnection connection = DbConnection)
-                {
-                    connection.Open();
-                    connection.Close();
-                    return ValidConnectionString = true;
-                }
-            }
-            catch (Exception)
-            {
-                return ValidConnectionString = false;
-            }
-        }
-
-        public DbConnection DbConnection { get { return new SqlConnection(DbConnectionString); } }
-
+        #region properties 
+        
         public bool ValidConnectionString { get; set; }
 
         public bool IsWindowsAuth { get; set; }
 
-        public string DbConnectionString { get; set; }
+        public string DbConnectionString
+        {
+            get
+            {
+                if (!string.IsNullOrWhiteSpace(TableToSearch))
+                {
+                    return string.Format(_dbConnectionString + "Initial Catalog={0};", TableToSearch);
+                }
+                return _dbConnectionString;
+            }
+            set { _dbConnectionString = value; }
+        }
 
         public string DbUserName { get; set; }
 
@@ -64,9 +53,11 @@ namespace MsSqlDbHandler
 
         public string DbCommandText { get; set; }
 
+        #endregion
+
         public List<string> GetTableNames()
         {
-            using (IDbConnection connection = DbConnection)
+            using (SqlConnection connection = new SqlConnection(DbConnectionString))
             {
                 connection.Open();
 
@@ -81,7 +72,7 @@ namespace MsSqlDbHandler
 
         public List<string> GetColumnNames(string tableName)
         {
-            using (IDbConnection connection = DbConnection)
+            using (SqlConnection connection = new SqlConnection(DbConnectionString))
             {
                 connection.Open();
 
@@ -96,12 +87,50 @@ namespace MsSqlDbHandler
             }
         }
 
+        public List<string> GetDatabases()
+        {
+            List<string> databasesNames = new List<string>();
+            DataTable databases = new DataTable("Databases");
+            SqlConnection getConnection = null;
+            try
+            {
+                getConnection = new SqlConnection(DbConnectionString);
+
+                using (var connection = getConnection)
+                {
+                    IDbCommand command = connection.CreateCommand();
+                    command.CommandText = "SELECT * FROM sys.Databases";
+                    connection.Open();
+                    databases.Load(command.ExecuteReader(CommandBehavior.CloseConnection));
+                }
+
+                foreach (DataRow database in databases.Rows)
+                {
+                    string databaseName = database.Field<string>("name");
+                    databasesNames.Add(databaseName);
+                }
+            }
+            catch (SqlException ex)
+            {
+            }
+            catch (Exception ex)
+            {
+            }
+            finally
+            {
+                if (getConnection != null)
+                    getConnection.Close();
+            }
+
+            return databasesNames;
+        }
+
         public DataTable GetRows(string tableToSearch, string columnToSpellCheck)
         {
             if (string.IsNullOrWhiteSpace(tableToSearch) || string.IsNullOrWhiteSpace(columnToSpellCheck))
                 return new DataTable();
 
-            using (IDbConnection connection = DbConnection)
+            using (IDbConnection connection = new SqlConnection(DbConnectionString))
             {
                 connection.Open();
 
@@ -126,6 +155,8 @@ namespace MsSqlDbHandler
                 return dataSet.Tables[0];
             }
         }
+
+        #region private methods
 
         private DataSet CreateDataSet(string commandText, Dictionary<string, object> parameters, IDbConnection connection)
         {
@@ -175,5 +206,7 @@ namespace MsSqlDbHandler
         {
             return new SqlParameter(name, value ?? DBNull.Value);
         }
+
+        #endregion
     }
 }

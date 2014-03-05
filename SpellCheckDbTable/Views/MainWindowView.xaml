@@ -9,11 +9,12 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="140"/>
+            <RowDefinition Height="160"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="25"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Column="0" Grid.Row="0">
+            <Label Content="DataBase to search for spelling errors:" HorizontalContentAlignment="Right" MinHeight="20" />
             <Label Content="Table to search for spelling errors:" HorizontalContentAlignment="Right" MinHeight="20" />
             <Label Content="Column to spell check:" HorizontalContentAlignment="Right"  MinHeight="20"/>
             <Label Content="Display miss spelled words only:" HorizontalContentAlignment="Right"  MinHeight="20" />
@@ -24,19 +25,39 @@
             </StackPanel>
         </StackPanel>
         <StackPanel Grid.Column="1" Grid.Row="0" Margin="0,0,5,0">
-            <ComboBox ItemsSource="{Binding TableNames}" SelectedValue="{Binding TableToSearch, Mode=TwoWay}" Margin="0,0,0,5" />
-            <ComboBox ItemsSource="{Binding ColumnNames}" SelectedValue="{Binding ColumnToSpellCheck, Mode=TwoWay}" />
-            <CheckBox IsChecked="{Binding IsMissSpelledOnly}"  Margin="2,15,0,5"/>
-            <Button Content="Begin spell checking table" cal:Message.Attach="SpellCheck" IsEnabled="{Binding IsSpellCheckEnabled}"/>
+            <ComboBox ItemsSource="{Binding DataBaseNames}" 
+                      SelectedValue="{Binding DataBaseToSearch, Mode=TwoWay}" 
+                      cal:Message.Attach="[Event SelectionChanged] = [OnSelectionChangedDatabaseName($this)]"
+                      IsEnabled="{Binding HasDataBaseNames}"
+                      Margin="0,5,0,5" />
+            <ComboBox ItemsSource="{Binding TableNames}" 
+                      SelectedValue="{Binding TableToSearch, Mode=TwoWay}" 
+                      Margin="0,0,0,5" 
+                      IsEnabled="{Binding IsDatabaseNameSelected}"
+                      cal:Message.Attach="[Event SelectionChanged] = [OnSelectionChangedTableName($this)]" />
+            <ComboBox ItemsSource="{Binding ColumnNames}" 
+                      IsEnabled="{Binding IsTableSelected}"
+                      cal:Message.Attach="[Event SelectionChanged] = [OnSelectionChangedColumnName]"
+                      SelectedValue="{Binding ColumnToSpellCheck, Mode=TwoWay}" />
+            <CheckBox IsChecked="{Binding IsMissSpelledOnly}"  
+                      Margin="2,5,0,5"/>
+            <Button Content="Begin spell checking table" 
+                    cal:Message.Attach="SpellCheck" 
+                    IsEnabled="{Binding IsSpellCheckEnabled}"/>
+            <Button Content="Connect To Server" 
+                    cal:Message.Attach="ConnectToServer" 
+                    IsEnabled="{Binding CanConnectToServer}" 
+                    MaxWidth="150" 
+                    Margin="0,5,0,0" />
         </StackPanel>
-        <Border Grid.ColumnSpan="2" Grid.Row="1" BorderThickness="2" BorderBrush="Black">
+        <Border Grid.ColumnSpan="2" Grid.Column="0" Grid.Row="1" BorderThickness="2" BorderBrush="Black">
             <ScrollViewer Grid.ColumnSpan="2" Grid.Row="1">
                 <StackPanel Grid.ColumnSpan="2" Grid.Row="1">
                     <DataGrid ItemsSource="{Binding SpellCheckResults}" CanUserAddRows="True" Height="AUTO" IsReadOnly="True"/>
                 </StackPanel>
             </ScrollViewer>
         </Border>
-        <StackPanel Grid.ColumnSpan="2" Grid.Row="2">
+        <StackPanel Grid.ColumnSpan="2" Grid.Column="0" Grid.Row="2">
             <ProgressBar Margin="0,3,0,3" Height="20" Name="progressBar" Value="{Binding CurrentProgress}" Foreground="#FF0A447C" />
         </StackPanel>
     </Grid>

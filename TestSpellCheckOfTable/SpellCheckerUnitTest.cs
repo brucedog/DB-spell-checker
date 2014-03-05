@@ -2,7 +2,6 @@
 using System.Linq;
 using BaseLibrary;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MsSqlDbHandler.Utils;
 using Rhino.Mocks;
 using SpellCheckDbTable;
 using Utils;
@@ -55,7 +54,7 @@ namespace TestSpellCheckOfTable
         [TestMethod]
         public void MissSpellsFoundInTable()
         {
-            ISpellChecker spellChecker = new SpellChecker(_mockDb, new IgnoreDictionaryHelper());
+            ISpellChecker spellChecker = new SpellChecker(new IgnoreDictionaryHelper());
             var dataTable = spellChecker.SpellCheckTable(TableName, ColumnToSearch, null);
             var errors = (from error in dataTable.AsEnumerable()
                           where error.Field<bool>("IsSpelledCorrectly") == false

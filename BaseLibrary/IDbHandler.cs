@@ -89,5 +89,11 @@ namespace BaseLibrary
         /// <param name="tableName">Name of the table.</param>
         /// <returns></returns>
         List<string> GetColumnNames(string tableName);
+
+        /// <summary>
+        /// Gets the databases.
+        /// </summary>
+        /// <returns></returns>
+        List<string> GetDatabases();
     }
 }

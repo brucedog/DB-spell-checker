@@ -14,7 +14,6 @@ namespace SpellCheckDbTable.ViewModels
     {
         private BackgroundWorker _worker;
         private readonly ISpellChecker _spellChecker;
-        private readonly IDbHandler _dbHandler;
         private readonly IIgnoreDictionaryHelper _ignoreDictionaryHelper;
         private int _currentProgress;
         private DataTable _spellCheckResults;
@@ -28,22 +27,38 @@ namespace SpellCheckDbTable.ViewModels
         private string _numberOfMissSpellingsLabel;
         private readonly IWindowManager _windowManager;
         private readonly IKernel _kernel;
+        private List<string> _dataBaseNames;
+        private string _dataBaseToSearch;
+        private DataTable _fullSpellCheckedColumn = new DataTable();
+        private bool _isBusySpellChecking;
+        private bool _hasDataBaseNames;
+        private bool _isDatabaseNameSelected;
+        private bool _isTableSelected;
+        private bool _canConnectToServer;
 
         public MainWindowViewModel(IKernel kernel, IWindowManager windowManager)
         {
             DisplayName = Resources.DisplayName;
-             _kernel = kernel;
+            
+            _kernel = kernel;
             _windowManager = windowManager;
             _ignoreDictionaryHelper = new IgnoreDictionaryHelper();
-            _spellChecker = new SpellChecker(_dbHandler, _ignoreDictionaryHelper);
+            _spellChecker = new SpellChecker(_ignoreDictionaryHelper);
             IsSpellCheckEnabled = false;
             IsMissSpelledOnly = true;
+
+            InitBackgroundWorker();
+        }
+
+        protected override void OnViewLoaded(object view)
+        {
+            base.OnViewLoaded(view);
+            ConnectToServer();
         }
 
         #region public action 
         
-        
-        public void BeginSpellCheck()
+        public void SpellCheck()
         {
             if (!_worker.IsBusy)
                 _worker.RunWorkerAsync("This is a background process");
@@ -52,6 +67,39 @@ namespace SpellCheckDbTable.ViewModels
         public void ViewEditIqnoreList()
         {
             _windowManager.ShowDialog(_kernel.Get<EditIgnoreListViewModel>(), null);
+        }
+
+        public void OnSelectionChangedDatabaseName(string databaseName)
+        {
+            DbConnectionManager.ConnectionManager.DbHandler.TableToSearch = databaseName;
+            TableNames = DbConnectionManager.ConnectionManager.DbHandler.GetTableNames();
+            IsDatabaseNameSelected = true;
+            IsTableSelected = false;
+            IsSpellCheckEnabled = false;
+
+            ColumnToSpellCheck = string.Empty;
+            ColumnNames.Clear();            
+        }
+
+        public void OnSelectionChangedTableName(string tableName)
+        {
+            ColumnNames = DbConnectionManager.ConnectionManager.DbHandler.GetColumnNames(tableName);
+            ColumnToSpellCheck = string.Empty;
+            IsTableSelected = true;
+            IsSpellCheckEnabled = false;
+        }
+
+        public void OnSelectionChangedColumnName()
+        {
+            IsSpellCheckEnabled = !string.IsNullOrWhiteSpace(ColumnToSpellCheck);
+        }
+
+        public void ConnectToServer()
+        {
+            var dbConnectionViewModel = new DbConnectionViewModel(this);
+            _windowManager.ShowDialog(dbConnectionViewModel);
+            HasDataBaseNames = DataBaseNames.Any();
+            CanConnectToServer = true;
         }
 
         #endregion
@@ -70,29 +118,40 @@ namespace SpellCheckDbTable.ViewModels
         {
             CurrentProgress = 0;
             IsSpellCheckEnabled = true;
+            CanConnectToServer = true;
             NumberOfMissSpellings = Resources.NumberOfMissSpelling + _missSpellingCount;
         }
 
         private void DoWork(object sender, DoWorkEventArgs e)
         {
             IsSpellCheckEnabled = false;
+            CanConnectToServer = false;
             SpellCheckResults = null;
-            DataTable temp = _spellChecker.SpellCheckTable(TableToSearch, ColumnToSpellCheck, _worker);
-            if (IsMissSpelledOnly && temp != null)
-            {
-                SpellCheckResults = (from row in temp.AsEnumerable().AsParallel()
-                                     where row.Field<bool>("IsSpelledCorrectly") == false
-                                     select row).CopyToDataTable();
+            _fullSpellCheckedColumn = _spellChecker.SpellCheckTable(TableToSearch, ColumnToSpellCheck, _worker);
+            SpellCheckResults = _fullSpellCheckedColumn;
 
-                _missSpellingCount = SpellCheckResults == null ? 0 : SpellCheckResults.Rows.Count;
+            FitlerSpellCheckResults();        
+        }
+
+        private void FitlerSpellCheckResults()
+        {
+            if (IsMissSpelledOnly && SpellCheckResults != null)
+            {
+                var results = (from row in SpellCheckResults.AsEnumerable().AsParallel()
+                               where row.Field<bool>("IsSpelledCorrectly") == false
+                               select row);
+
+                if (results.Any())
+                {
+                    SpellCheckResults = results.CopyToDataTable();
+                }
+
+                _missSpellingCount = SpellCheckResults.Rows.Count;
             }
             else
             {
-                SpellCheckResults = temp;
-
-                _missSpellingCount = (from row in temp.AsEnumerable().AsParallel()
-                                      where row.Field<bool>("IsSpelledCorrectly") == false
-                                      select row).CopyToDataTable().Rows.Count;
+                SpellCheckResults = _fullSpellCheckedColumn;
+                _missSpellingCount = _fullSpellCheckedColumn.Rows.Count;
             }
         }
 
@@ -105,15 +164,53 @@ namespace SpellCheckDbTable.ViewModels
 
         #region properties
 
+        public bool IsDatabaseNameSelected
+        {
+            get { return _isDatabaseNameSelected; }
+            set
+            {
+                _isDatabaseNameSelected = value;
+                NotifyOfPropertyChange(() => IsDatabaseNameSelected);
+            }
+        }
+
+        public bool HasDataBaseNames
+        {
+            get { return _hasDataBaseNames; }
+            set
+            {
+                _hasDataBaseNames = value;
+                NotifyOfPropertyChange(() => HasDataBaseNames);
+            }
+        }
+
+        public string DataBaseToSearch
+        {
+            get { return _dataBaseToSearch; }
+            set
+            {
+                _dataBaseToSearch = value;
+                NotifyOfPropertyChange(() => DataBaseToSearch);
+            }
+        }
+
+        public List<string> DataBaseNames
+        {
+            get { return _dataBaseNames; }
+            set
+            {
+                _dataBaseNames = value;
+                NotifyOfPropertyChange(() => DataBaseNames);
+            }
+        }
+
         public string TableToSearch
         {
             get { return _tableToSearch; }
             set
             {
                 _tableToSearch = value;
-                IsSpellCheckEnabled = false;
                 NotifyOfPropertyChange(() => TableToSearch);
-                NotifyOfPropertyChange(() => ColumnNames);
             }
         }
 
@@ -123,7 +220,6 @@ namespace SpellCheckDbTable.ViewModels
             set
             {
                 _columnToSpellCheck = value;
-                IsSpellCheckEnabled = true;
                 NotifyOfPropertyChange(() => ColumnToSpellCheck);
             }
         }
@@ -154,13 +250,14 @@ namespace SpellCheckDbTable.ViewModels
             set
             {
                 _isMissSpelledOnly = value;
+                FitlerSpellCheckResults();
                 NotifyOfPropertyChange(() => IsMissSpelledOnly);
             }
         }
 
         public DataTable SpellCheckResults
         {
-            get { return _spellCheckResults; }
+            get { return _spellCheckResults ?? (_spellCheckResults = new DataTable()); }
             set
             {
                 _spellCheckResults = value;
@@ -211,6 +308,36 @@ namespace SpellCheckDbTable.ViewModels
             {
                 _isSpellCheckEnabled = value;
                 NotifyOfPropertyChange(() => IsSpellCheckEnabled);
+            }
+        }
+
+        public bool IsBusySpellChecking
+        {
+            get { return _isBusySpellChecking; }
+            set
+            {
+                _isBusySpellChecking = value;
+                NotifyOfPropertyChange(() => IsBusySpellChecking);
+            }
+        }
+
+        public bool IsTableSelected
+        {
+            get { return _isTableSelected; }
+            set
+            {
+                _isTableSelected = value;
+                NotifyOfPropertyChange(() => IsTableSelected);
+            }
+        }
+
+        public bool CanConnectToServer
+        {
+            get { return _canConnectToServer; }
+            set
+            {
+                _canConnectToServer = value;
+                NotifyOfPropertyChange(() => CanConnectToServer);
             }
         }
 

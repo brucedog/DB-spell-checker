@@ -31,7 +31,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -44,10 +43,6 @@
   <ItemGroup>
     <Compile Include="MsSqlDbHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utils\DatabaseTable.cs" />
-    <Compile Include="Utils\ISmoTasks.cs" />
-    <Compile Include="Utils\SmoTasks.cs" />
-    <Compile Include="Utils\SqlConnectionString.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BaseLibrary\BaseLibrary.csproj">

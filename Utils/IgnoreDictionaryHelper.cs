@@ -14,7 +14,8 @@ namespace Utils
     /// </summary>
     public class IgnoreDictionaryHelper : IIgnoreDictionaryHelper
     {
-        Hashtable _ignoreList = new Hashtable();
+        private Hashtable _ignoreList = new Hashtable();
+        private const string FileName = "\\ignoreList.txt";        
 
         public IgnoreDictionaryHelper()
         {
@@ -29,7 +30,8 @@ namespace Utils
         public void BuildIgnoreList()
         {
             List<string> tempList = new List<string>();
-            using (StreamReader streamReader = new StreamReader(Directory.GetCurrentDirectory() + "\\ignoreList.txt"))
+            string directory = Directory.GetCurrentDirectory() + FileName;
+            using (StreamReader streamReader = new StreamReader(directory, Encoding.ASCII))
             {
                 string line;
                 while ((line = streamReader.ReadLine()) != null)
@@ -59,7 +61,8 @@ namespace Utils
 
         public bool DoesIgnoreFileExist()
         {
-            return File.Exists(Directory.GetCurrentDirectory() + "\\ignoreList.txt");
+            string directory = Directory.GetCurrentDirectory() + FileName;
+            return File.Exists(directory);
         }
 
         public void SaveIgnoreList(string ignoreList)
@@ -94,7 +97,11 @@ namespace Utils
         {
             try
             {
-                File.WriteAllText(Directory.GetCurrentDirectory() + "\\ignoreList.txt", ignoreList);
+                string directory = Directory.GetCurrentDirectory() + FileName;
+                using (StreamWriter outfile = new StreamWriter(directory, false, Encoding.ASCII))
+                {
+                    outfile.Write(ignoreList);
+                }
                 return true;
             }
             catch (Exception ex)
@@ -108,7 +115,11 @@ namespace Utils
         {
             try
             {
-                File.Create(Directory.GetCurrentDirectory() + "\\ignoreList.txt");
+                string directory = Directory.GetCurrentDirectory() + FileName;
+                using (StreamWriter outfile = new StreamWriter(directory))
+                {
+                    outfile.Write(string.Empty);
+                }
             }
             catch (Exception ex)
             {
