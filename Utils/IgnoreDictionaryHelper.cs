@@ -44,7 +44,8 @@ namespace Utils
             var unquieTempList = tempList.AsParallel().Distinct();
             foreach (var item in unquieTempList)
             {
-                IgnoreList.Add(item, item);
+                if(!IgnoreList.ContainsKey(item))
+                    IgnoreList.Add(item, item);
             }
         }
 

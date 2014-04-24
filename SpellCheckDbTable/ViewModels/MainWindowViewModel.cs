@@ -98,6 +98,7 @@ namespace SpellCheckDbTable.ViewModels
         {
             var dbConnectionViewModel = new DbConnectionViewModel(this);
             _windowManager.ShowDialog(dbConnectionViewModel);
+
             HasDataBaseNames = DataBaseNames.Any();
             CanConnectToServer = true;
         }
@@ -164,6 +165,16 @@ namespace SpellCheckDbTable.ViewModels
 
         #region properties
 
+        public bool CanSpellCheck
+        {
+            get
+            {
+                return !string.IsNullOrWhiteSpace(DataBaseToSearch) 
+                    && !string.IsNullOrWhiteSpace(TableToSearch)
+                    && !string.IsNullOrWhiteSpace(ColumnToSpellCheck);
+            }
+        }
+
         public bool IsDatabaseNameSelected
         {
             get { return _isDatabaseNameSelected; }
@@ -191,12 +202,13 @@ namespace SpellCheckDbTable.ViewModels
             {
                 _dataBaseToSearch = value;
                 NotifyOfPropertyChange(() => DataBaseToSearch);
+                NotifyOfPropertyChange(() => CanSpellCheck);
             }
         }
 
         public List<string> DataBaseNames
         {
-            get { return _dataBaseNames; }
+            get { return _dataBaseNames ?? (_dataBaseNames = new List<string>()); }
             set
             {
                 _dataBaseNames = value;
@@ -211,6 +223,7 @@ namespace SpellCheckDbTable.ViewModels
             {
                 _tableToSearch = value;
                 NotifyOfPropertyChange(() => TableToSearch);
+                NotifyOfPropertyChange(() => CanSpellCheck);
             }
         }
 
@@ -221,6 +234,7 @@ namespace SpellCheckDbTable.ViewModels
             {
                 _columnToSpellCheck = value;
                 NotifyOfPropertyChange(() => ColumnToSpellCheck);
+                NotifyOfPropertyChange(() => CanSpellCheck);
             }
         }
 
@@ -269,7 +283,7 @@ namespace SpellCheckDbTable.ViewModels
         {
             get
             {
-                return _tableNames;
+                return _tableNames ?? (_tableNames = new List<string>());
             }
             set
             {
@@ -282,7 +296,7 @@ namespace SpellCheckDbTable.ViewModels
         {
             get
             {
-                return _columnNames;
+                return _columnNames ?? (_columnNames = new List<string>());
             }
             set
             {

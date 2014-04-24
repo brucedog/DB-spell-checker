@@ -21,7 +21,7 @@
             <Label Content="{Binding NumberOfMissSpellings}" HorizontalContentAlignment="Left" FontWeight="Bold" MinHeight="20"/>
             <StackPanel Orientation="Horizontal">
                 <Label Content="{Binding IgnoreListFile}" HorizontalContentAlignment="Left" FontWeight="Bold" MinHeight="20" />
-                <Button Content="View" cal:Message.Attach="ViewEditIqnoreList" MaxWidth="60" HorizontalAlignment="Left" Margin="0,0,0,5" />
+                <Button x:Name="ViewEditIqnoreList" Content="Ignore List" MaxWidth="70" HorizontalAlignment="Left" Margin="0,0,0,5" />
             </StackPanel>
         </StackPanel>
         <StackPanel Grid.Column="1" Grid.Row="0" Margin="0,0,5,0">
@@ -41,9 +41,7 @@
                       SelectedValue="{Binding ColumnToSpellCheck, Mode=TwoWay}" />
             <CheckBox IsChecked="{Binding IsMissSpelledOnly}"  
                       Margin="2,5,0,5"/>
-            <Button Content="Begin spell checking table" 
-                    cal:Message.Attach="SpellCheck" 
-                    IsEnabled="{Binding IsSpellCheckEnabled}"/>
+            <Button x:Name="SpellCheck" Content="Begin spell checking table" />
             <Button Content="Connect To Server" 
                     cal:Message.Attach="ConnectToServer" 
                     IsEnabled="{Binding CanConnectToServer}" 
