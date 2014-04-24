@@ -9,7 +9,7 @@ using Utils;
 namespace TestSpellCheckOfTable
 {
     [TestClass]
-    public class SpellCheckerUnitTest
+    public class SpellCheckerUnitTests
     {
         private IDbHandler _mockDb;
         private IIgnoreDictionaryHelper _ignoreDictionaryHelper;
