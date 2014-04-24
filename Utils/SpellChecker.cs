@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Data;
-using System.Runtime.Versioning;
 using System.Windows.Forms;
 using BaseLibrary;
 

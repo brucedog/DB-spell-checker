@@ -8,19 +8,17 @@ using SpellCheckDbTable.ViewModels;
 namespace TestSpellCheckOfTable
 {
     [TestClass]
-    public class EditIgnoreListViewModelUnitTests
+    public class EditIgnoreListViewModelUnitTests : BaseUnitTests
     {
-        private IDbHandler _mockDb;
-        private IIgnoreDictionaryHelper _ignoreDictionaryHelper;
         private const string TableName = "SomeTable";
         private const string ColumnToSearch = "SomeColumn";
 
         [TestInitialize]
         public void TestSetup()
         {
-            _ignoreDictionaryHelper = MockRepository.GenerateStrictMock<IIgnoreDictionaryHelper>();
-            _ignoreDictionaryHelper.Stub(s => s.IgnoreList).Return(new Hashtable());
-            _mockDb = MockRepository.GenerateStrictMock<IDbHandler>();
+            IgnoreDictionaryHelper = MockRepository.GenerateStrictMock<IIgnoreDictionaryHelper>();
+            IgnoreDictionaryHelper.Stub(s => s.IgnoreList).Return(new Hashtable());
+            MockDb = MockRepository.GenerateStrictMock<IDbHandler>();
             DataTable table = new DataTable();
             table.Columns.Add(new DataColumn(ColumnToSearch));
             DataRow row = table.NewRow();
@@ -33,17 +31,18 @@ namespace TestSpellCheckOfTable
             row[ColumnToSearch] = "yes";
             table.Rows.Add(row);
 
-            _mockDb.Stub(s => s.GetRows(Arg<string>.Is.Equal(TableName), Arg<string>.Is.Equal(ColumnToSearch)))
+            IgnoreDictionaryHelper.Stub(s => s.IgnoreList).Return(new Hashtable());
+            MockDb.Stub(s => s.GetRows(Arg<string>.Is.Equal(TableName), Arg<string>.Is.Equal(ColumnToSearch)))
                 .Return(table);
         }
 
         [TestMethod]
         public void EditIgnoreListViewModel_Contruct()
         {
-            _ignoreDictionaryHelper.Expect(e => e.DoesIgnoreFileExist()).Return(false);
-            var sut = new EditIgnoreListViewModel(_ignoreDictionaryHelper);
+            IgnoreDictionaryHelper.Expect(e => e.DoesIgnoreFileExist()).Return(false);
+            var sut = new EditIgnoreListViewModel(IgnoreDictionaryHelper);
 
-            _ignoreDictionaryHelper.VerifyAllExpectations();
+            IgnoreDictionaryHelper.VerifyAllExpectations();
             Assert.IsInstanceOfType(sut, typeof(EditIgnoreListViewModel));
         }
 
@@ -51,13 +50,13 @@ namespace TestSpellCheckOfTable
         public void EditIgnoreListViewModel_SaveIgnoreList()
         {
             string save = "save this";
-            _ignoreDictionaryHelper.Expect(e => e.DoesIgnoreFileExist()).Return(false);
-            _ignoreDictionaryHelper.Expect(e => e.SaveIgnoreList(save));
-            var sut = new EditIgnoreListViewModel(_ignoreDictionaryHelper){IgnoreList = save};
+            IgnoreDictionaryHelper.Expect(e => e.DoesIgnoreFileExist()).Return(false);
+            IgnoreDictionaryHelper.Expect(e => e.SaveIgnoreList(save));
+            var sut = new EditIgnoreListViewModel(IgnoreDictionaryHelper){IgnoreList = save};
             
             sut.SaveIgnoreList();
             
-            _ignoreDictionaryHelper.VerifyAllExpectations();
+            IgnoreDictionaryHelper.VerifyAllExpectations();
         }
     }
 }

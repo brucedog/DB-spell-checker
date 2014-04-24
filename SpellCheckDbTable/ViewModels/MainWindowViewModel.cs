@@ -12,6 +12,8 @@ namespace SpellCheckDbTable.ViewModels
 {
     public class MainWindowViewModel : Screen
     {
+        #region private fields 
+
         private BackgroundWorker _worker;
         private readonly ISpellChecker _spellChecker;
         private readonly IIgnoreDictionaryHelper _ignoreDictionaryHelper;
@@ -35,6 +37,8 @@ namespace SpellCheckDbTable.ViewModels
         private bool _isDatabaseNameSelected;
         private bool _isTableSelected;
         private bool _canConnectToServer;
+
+        #endregion
 
         public MainWindowViewModel(IKernel kernel, IWindowManager windowManager)
         {
@@ -66,7 +70,7 @@ namespace SpellCheckDbTable.ViewModels
 
         public void ViewEditIqnoreList()
         {
-            _windowManager.ShowDialog(_kernel.Get<EditIgnoreListViewModel>(), null);
+            _windowManager.ShowDialog(_kernel.Get<EditIgnoreListViewModel>());
         }
 
         public void OnSelectionChangedDatabaseName(string databaseName)
@@ -164,7 +168,7 @@ namespace SpellCheckDbTable.ViewModels
         #endregion
 
         #region properties
-
+        
         public bool CanSpellCheck
         {
             get

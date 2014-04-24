@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Windows;
 using Caliburn.Micro;
 using Ninject;
 using SpellCheckDbTable.ViewModels;
-using SpellCheckDbTable.Views;
 
 namespace SpellCheckDbTable
 {
@@ -14,34 +10,9 @@ namespace SpellCheckDbTable
         protected override void Configure()
         {
             InitializeNinject();
-            AssemblySource.Instance.AddRange(SelectAssemblies());
             Kernel.Get<IEventAggregator>().Subscribe(this);
         }
-        protected override IEnumerable<Assembly> SelectAssemblies()
-        {
-            return new[]
-            {
-                Assembly.GetExecutingAssembly(),
-                typeof(MainWindowViewModel).Assembly,
-                typeof(MainWindowView).Assembly
-            };
-        }
-
-        protected override void OnStartup(object sender, StartupEventArgs e)
-        {
-            var config = new TypeMappingConfiguration
-            {
-                DefaultSubNamespaceForViewModels = typeof(MainWindowViewModel).Namespace,
-                DefaultSubNamespaceForViews = typeof(MainWindowView).Namespace
-            };
-
-            ViewLocator.ConfigureTypeMappings(config);
-            ViewModelLocator.ConfigureTypeMappings(config);
-
-            base.OnStartup(sender, e);
-        }
-
-
+        
         /// <summary>
         /// Overrides default IoC behavior to use Ninject.
         /// </summary>

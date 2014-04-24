@@ -9,19 +9,14 @@ using Utils;
 namespace TestSpellCheckOfTable
 {
     [TestClass]
-    public class SpellCheckerUnitTests
+    public class SpellCheckerUnitTests : BaseUnitTests
     {
-        private IDbHandler _mockDb;
-        private IIgnoreDictionaryHelper _ignoreDictionaryHelper;
         private const string TableName = "SomeTable";
         private const string ColumnToSearch = "SomeColumn";
         
         [TestInitialize]
         public void TestSetup()
         {
-            _ignoreDictionaryHelper = MockRepository.GenerateStrictMock<IIgnoreDictionaryHelper>();
-            _ignoreDictionaryHelper.Stub(s => s.IgnoreList).Return(new Hashtable());
-            _mockDb = MockRepository.GenerateStrictMock<IDbHandler>();
             DataTable table = new DataTable();
             table.Columns.Add(new DataColumn(ColumnToSearch));
             DataRow row = table.NewRow();
@@ -33,16 +28,17 @@ namespace TestSpellCheckOfTable
             row = table.NewRow();
             row[ColumnToSearch] = "yes";
             table.Rows.Add(row);
-            
-            _mockDb.Stub(s => s.GetRows(Arg<string>.Is.Equal(TableName), Arg<string>.Is.Equal(ColumnToSearch)))
+
+            IgnoreDictionaryHelper.Stub(s => s.IgnoreList).Return(new Hashtable());
+            MockDb.Stub(s => s.GetRows(Arg<string>.Is.Equal(TableName), Arg<string>.Is.Equal(ColumnToSearch)))
                 .Return(table);
         }
 
         [TestMethod]
         public void MissSpellsFoundInTable()
         {            
-            ISpellChecker spellChecker = new SpellChecker(_ignoreDictionaryHelper);
-            DbConnectionManager.ConnectionManager.DbHandler = _mockDb;
+            ISpellChecker spellChecker = new SpellChecker(IgnoreDictionaryHelper);
+            DbConnectionManager.ConnectionManager.DbHandler = MockDb;
             
             var dataTable = spellChecker.SpellCheckTable(TableName, ColumnToSearch, null);
             

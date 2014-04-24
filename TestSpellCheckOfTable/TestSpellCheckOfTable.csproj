@@ -66,6 +66,7 @@
     </CodeAnalysisDependentAssemblyPaths>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseUnitTests.cs" />
     <Compile Include="EditIgnoreListViewModelUnitTests.cs" />
     <Compile Include="MainWindowViewModelUnitTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
