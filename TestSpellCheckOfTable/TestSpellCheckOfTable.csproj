@@ -91,14 +91,14 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\packages\dictionaries\en_US.aff">
+    <Content Include="..\packages\dictionaries\en_US.aff">
       <Link>en_US.aff</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\packages\dictionaries\en_US.dic">
+    </Content>
+    <Content Include="..\packages\dictionaries\en_US.dic">
       <Link>en_US.dic</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </Content>
     <None Include="..\SpellCheckDbTable\app.config">
       <Link>app.config</Link>
     </None>
@@ -107,6 +107,7 @@
   <ItemGroup>
     <Content Include="..\SpellCheckDbTable\ignoreList.txt">
       <Link>ignoreList.txt</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
