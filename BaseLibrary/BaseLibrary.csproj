@@ -42,7 +42,6 @@
   <ItemGroup>
     <Compile Include="IDbHandler.cs" />
     <Compile Include="IIgnoreDictionaryHelper.cs" />
-    <Compile Include="IMessenger.cs" />
     <Compile Include="ISpellChecker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

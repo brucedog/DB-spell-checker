@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<TestSettings name="TestSettings" id="099fdb54-0e67-4d69-8029-f722273baba9" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Description>These are default test settings for a local test run.</Description>
+  <Deployment>
+    <DeploymentItem filename="packages\NHunspell.1.1.1\native\Hunspellx86.dll" />
+    <DeploymentItem filename="TestSpellCheckOfTable\ignoreList.txt" />
+  </Deployment>
+  <Execution>
+    <Timeouts runTimeout="1800000" testTimeout="60000" />
+    <TestTypeSpecific>
+      <UnitTestRunConfig testTypeId="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b">
+        <AssemblyResolution>
+          <TestDirectory useLoadContext="true" />
+        </AssemblyResolution>
+      </UnitTestRunConfig>
+    </TestTypeSpecific>
+    <AgentRule name="LocalMachineDefaultRole">
+      <DataCollectors>
+        <DataCollector uri="datacollector://microsoft/CodeCoverage/1.0" assemblyQualifiedName="Microsoft.VisualStudio.TestTools.CodeCoverage.CoveragePlugIn, Microsoft.VisualStudio.QualityTools.Plugins.CodeCoverage, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" friendlyName="Code Coverage">
+          <Configuration>
+            <CodeCoverage xmlns="">
+              <Regular>
+                <CodeCoverageItem binaryFile="Utils\bin\Debug\Utils.dll" pdbFile="Utils\bin\Debug\Utils.pdb" instrumentInPlace="true" />
+                <CodeCoverageItem binaryFile="SpellCheckDbTable\bin\Debug\SpellCheckDbTable.exe" pdbFile="SpellCheckDbTable\bin\Debug\SpellCheckDbTable.pdb" instrumentInPlace="true" />
+                <CodeCoverageItem binaryFile="DbHandler\bin\Debug\MsSqlDbHandler.dll" pdbFile="DbHandler\bin\Debug\MsSqlDbHandler.pdb" instrumentInPlace="true" />
+              </Regular>
+            </CodeCoverage>
+          </Configuration>
+        </DataCollector>
+      </DataCollectors>
+    </AgentRule>
+  </Execution>
+</TestSettings>

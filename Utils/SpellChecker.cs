@@ -30,7 +30,7 @@ namespace Utils
                 return null;
 
             int rowCounter = 0;
-
+            
             NHunspell.Hunspell hunspell = new NHunspell.Hunspell("Dictionaries\\en_us.aff", "Dictionaries\\en_us.dic");
             dataTable.Columns.Add("IsSpelledCorrectly", typeof(bool));
 

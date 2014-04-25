@@ -15,9 +15,6 @@ namespace TestSpellCheckOfTable
         protected IIgnoreDictionaryHelper IgnoreDictionaryHelper;
 
         [TestInitialize]
-        [DeploymentItem("%myDir%\\en_US.aff")]
-        [DeploymentItem("%myDir%\\en_US.dic")]
-        [DeploymentItem("%myDir%\\ignoreList.txt")]
         public void SetUp()
         {
             WindowManager = MockRepository.GenerateMock<IWindowManager>();

@@ -94,10 +94,10 @@
     <None Include="..\SpellCheckDbTable\app.config">
       <Link>app.config</Link>
     </None>
-    <Content Include="en_US.aff">
+    <Content Include="Dictionaries\en_US.aff">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="en_US.dic">
+    <Content Include="Dictionaries\en_US.dic">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="packages.config" />

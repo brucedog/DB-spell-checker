@@ -9,6 +9,7 @@ using Utils;
 namespace TestSpellCheckOfTable
 {
     [TestClass]
+    [DeploymentItem("Dictionaries", "Dictionaries")]
     public class SpellCheckerUnitTests : BaseUnitTests
     {
         private const string TableName = "SomeTable";
@@ -33,7 +34,7 @@ namespace TestSpellCheckOfTable
             MockDb.Stub(s => s.GetRows(Arg<string>.Is.Equal(TableName), Arg<string>.Is.Equal(ColumnToSearch)))
                 .Return(table);
         }
-        /*
+        
         [TestMethod]
         public void MissSpellsFoundInTable()
         {            
@@ -60,6 +61,5 @@ namespace TestSpellCheckOfTable
 
             Assert.IsTrue(ignoreDictionaryHelper.IgnoreList.Count > 0);
         }
-        */
     }
 }
