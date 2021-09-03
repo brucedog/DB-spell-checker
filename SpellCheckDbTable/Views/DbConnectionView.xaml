@@ -6,27 +6,35 @@
         WindowStartupLocation="CenterOwner"
         Width="370"
         Height="220">
-    <StackPanel Orientation="Horizontal">
-        <StackPanel>
-            <Label Content="Server Type:"/>
-            <Label Content="Server Name:"/>
-            <Label Content="Authentication:"/>
-            <Label Content="User name:"/>
-            <Label Content="Password:"/>
-            <Button Content="Connect" Margin="0,18,0,0" cal:Message.Attach="Connect($view)" />
-        </StackPanel>
-        <StackPanel MinWidth="250">
-            <ComboBox Margin="0,5,0,0" Name="ServerType" SelectedIndex="0" cal:Message.Attach="[Event SelectionChanged] = [OnSelectionChangedServerType($this)]">
-                <ComboBoxItem Content="MS SQL Server" />
-            </ComboBox>
-            <TextBox Name="ServerName" Margin="0,5,0,0" Text="{Binding ServerName, Mode=TwoWay}"/>
-            <ComboBox Margin="0,5,0,0" Name="AuthType" SelectedIndex="0" cal:Message.Attach="[Event SelectionChanged] = [OnSelectionChangedAction($this)]">
-                <ComboBoxItem Content="Windows Authentication" />
-                <ComboBoxItem Content="SQL Server Authentication" />
-            </ComboBox>
-            <TextBox Name="Username" Margin="0,5,0,0" IsEnabled="{Binding IsSqlServerAuthenticationSelected}"/>
-            <PasswordBox Name="PasswordBox" Margin="0,5,0,0"  IsEnabled="{Binding IsSqlServerAuthenticationSelected}"/>
-            <Button Content="Close" Margin="0,15,0,0" cal:Message.Attach="Close" />
-        </StackPanel>
-    </StackPanel>
+    <Grid MinWidth="250" Row="6" Column="2">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" MinWidth="120"></ColumnDefinition>
+            <ColumnDefinition Width="Auto"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Label Content="Server Type:" Grid.Column="0" Grid.Row="0"/>
+        <Label Content="Server Name:" Grid.Column="0" Grid.Row="1"/>
+        <Label Content="Authentication:" Grid.Column="0" Grid.Row="2"/>
+        <Label Content="User name:" Grid.Column="0" Grid.Row="3"/>
+        <Label Content="Password:" Grid.Column="0" Grid.Row="4"/>
+        <Button Content="Connect" Grid.Column="0" Grid.Row="5" Padding="5" MaxHeight="25" cal:Message.Attach="Connect($view)"  MaxWidth="80"/>
+        <ComboBox Margin="0,5,0,0" Name="ServerType" SelectedIndex="0" cal:Message.Attach="[Event SelectionChanged] = [OnSelectionChangedServerType($this)]" Grid.Column="1" Grid.Row="2"  >
+            <ComboBoxItem Content="MS SQL Server" />
+        </ComboBox>
+        <TextBox Name="ServerName" Margin="0,5,0,0" Text="{Binding ServerName, Mode=TwoWay}" Grid.Column="1" Grid.Row="1"/>
+        <ComboBox Margin="0,5,0,0" Name="AuthType" SelectedIndex="0" cal:Message.Attach="[Event SelectionChanged] = [OnSelectionChangedAction($this)]" Grid.Column="1" Grid.Row="2">
+            <ComboBoxItem Content="Windows Authentication" />
+            <ComboBoxItem Content="SQL Server Authentication" />
+        </ComboBox>
+        <TextBox Name="Username" Margin="0,5,0,0" IsEnabled="{Binding IsSqlServerAuthenticationSelected}" Grid.Column="1" Grid.Row="3"/>
+        <PasswordBox Name="PasswordBox" Margin="0,5,0,0"  IsEnabled="{Binding IsSqlServerAuthenticationSelected}" Grid.Column="1" Grid.Row="4"/>
+        <Button Content="Close" Padding="5" cal:Message.Attach="Close"  Grid.Column="1" Grid.Row="5" MaxHeight="25" MaxWidth="80"/>
+    </Grid>
 </Window>
